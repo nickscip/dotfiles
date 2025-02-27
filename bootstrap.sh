@@ -14,3 +14,6 @@ fi
 #   echo "eval '$(/opt/homebrew/bin/brew shellenv)'" >> "$HOME/.zprofile"
 #   eval "$(/opt/homebrew/bin/brew shellenv)"
 # fi
+
+# Symlinks the .zshrc to the .dotfiles
+ln -sw "$HOME/.zshrc" "$HOME/.dotfiles/zshrc"
