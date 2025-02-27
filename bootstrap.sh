@@ -16,4 +16,4 @@ fi
 # fi
 
 # Symlinks the .zshrc to the .dotfiles
-ln -sw "$HOME/.zshrc" "$HOME/dotfiles/.zshrc"
+ln -sw "$HOME/dotfiles/.zshrc" "$HOME/.zshrc"
