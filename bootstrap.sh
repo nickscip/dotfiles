@@ -25,5 +25,7 @@ brew bundle --file ./Brewfile
 # Create a projects directory
 mkdir "$HOME/Developer"
 
+# TODO: Bootstrap the other config files
+
 # Run this last to source ZSH changes and reload the shell
 source ./.zshrc
