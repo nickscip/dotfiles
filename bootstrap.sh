@@ -21,3 +21,9 @@ brew update
 # Install all our dependencies with bundle (See Brewfile)
 brew tap homebrew/bundle
 brew bundle --file ./Brewfile
+
+# Create a projects directory
+mkdir "$HOME/Developer"
+
+# Run this last to source ZSH changes and reload the shell
+source ./.zshrc
