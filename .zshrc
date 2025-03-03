@@ -70,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git poetry tmux direnv rust git-commit vi-mode thefuck)
+plugins=(git direnv rust git-commit vi-mode thefuck)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -124,7 +124,6 @@ unset __conda_setup
 . "$HOME/.atuin/bin/env"
 
 eval "$(atuin init zsh)"
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
 eval $(thefuck --alias fuck)
 
