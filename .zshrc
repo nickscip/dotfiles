@@ -135,3 +135,11 @@ alias snowsql=/Applications/SnowSQL.app/Contents/MacOS/snowsql
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/local/bin/terraform terraform
+alias awsp="source _awsp"
+
+function aws_prof {
+  local profile="${AWS_PROFILE:=default}"
+
+  echo "%{$fg_bold[blue]%}aws:(%{$fg[yellow]%}${profile}%{$fg_bold[blue]%})%{$reset_color%} "
+}
+PROMPT='%~ $(aws_prof)'
