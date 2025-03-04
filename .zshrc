@@ -142,4 +142,4 @@ function aws_prof {
 
   echo "%{$fg_bold[blue]%}aws:(%{$fg[yellow]%}${profile}%{$fg_bold[blue]%})%{$reset_color%} "
 }
-PROMPT='%~ $(aws_prof)'
+PROMPT='%F{green}%~%f $(aws_prof)'
