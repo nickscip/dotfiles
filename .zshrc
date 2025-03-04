@@ -143,3 +143,6 @@ function aws_prof {
   echo "%{$fg_bold[blue]%}aws:(%{$fg[yellow]%}${profile}%{$fg_bold[blue]%})%{$reset_color%} "
 }
 PROMPT='%F{green}%~%f $(aws_prof)'
+
+alias mydir="cd ~/Developer/Personal/"
+alias workdir="cd ~/Developer/Work/"
