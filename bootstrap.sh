@@ -8,7 +8,7 @@ if test ! "$(which omz)"; then
 fi
 
 # Symlinks the .zshrc to the .dotfiles
-ln -sw "$HOME/dotfiles/.zshrc" "$HOME/.zshrc"
+ln -sw "$HOME/Developer/Personal/dotfiles/.zshrc" "$HOME/.zshrc"
 
 # Check for Homebrew and install it if we don't have it
 if test ! "$(which brew)"; then
@@ -23,7 +23,7 @@ brew tap homebrew/bundle
 brew bundle --file ./Brewfile
 
 # Create a projects directory
-mkdir "$HOME/Developer"
+mkdir "$HOME/Developer/Work"
 
 # TODO: Bootstrap the other config files
 
