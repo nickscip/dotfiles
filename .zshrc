@@ -70,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git direnv rust git-commit vi-mode thefuck)
+plugins=(git direnv rust git-commit vi-mode thefuck zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
