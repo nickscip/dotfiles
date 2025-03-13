@@ -128,7 +128,7 @@ export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
 eval $(thefuck --alias fuck)
 
 alias reload="source ~/.zshrc"
-alias act="source .venv/bin/activate"
+alias acc="source .venv/bin/activate"
 alias deac="deactivate"
 
 alias snowsql=/Applications/SnowSQL.app/Contents/MacOS/snowsql
@@ -146,3 +146,5 @@ PROMPT='%F{green}%~%f $(aws_prof)'
 
 alias mydir="cd ~/Developer/Personal/"
 alias workdir="cd ~/Developer/Work/"
+fpath+=/opt/homebrew/share/zsh/site-functions
+autoload -Uz compinit && compinit
