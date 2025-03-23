@@ -148,3 +148,4 @@ alias mydir="cd ~/Developer/Personal/"
 alias workdir="cd ~/Developer/Work/"
 fpath+=/opt/homebrew/share/zsh/site-functions
 autoload -Uz compinit && compinit
+source "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
