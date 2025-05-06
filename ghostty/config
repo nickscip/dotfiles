@@ -1,1 +1,7 @@
+keybind = shift+ctrl+r=reload_config
+
+keybind = shift+ctrl+h=new_split:left
+keybind = shift+ctrl+l=new_split:right
+keybind = shift+ctrl+k=new_split:up
+keybind = shift+ctrl+j=new_split:down
 
