@@ -70,7 +70,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git direnv rust git-commit vi-mode thefuck zsh-syntax-highlighting, git-prompt)
+plugins=(git direnv rust git-commit vi-mode thefuck zsh-syntax-highlighting git-prompt)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -148,7 +148,6 @@ alias mydir="cd ~/Developer/Personal/"
 alias workdir="cd ~/Developer/Work/"
 fpath+=/opt/homebrew/share/zsh/site-functions
 autoload -Uz compinit && compinit
-source "$HOME/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 
 # Alias terramate
 tm() {
