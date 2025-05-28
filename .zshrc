@@ -130,6 +130,7 @@ eval $(thefuck --alias fuck)
 alias reload="source ~/.zshrc"
 alias acc="source .venv/bin/activate"
 alias deac="deactivate"
+alias gs="git status --short"
 
 alias snowsql=/Applications/SnowSQL.app/Contents/MacOS/snowsql
 
