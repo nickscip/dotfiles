@@ -56,7 +56,7 @@ autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /usr/local/bin/terraform terraform
 
 # AWS profile switcher with SSO login by default
-function awsp() {
+function awp() {
     # Pick a profile. If you cancel, this won't force a login
     local choice
     choice=$(aws configure list-profiles | fzf --prompt "Choose active AWS profile:") || return
@@ -96,3 +96,9 @@ source "$HOME/.rye/env"
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
 export FZF_BASE=/path/to/fzf/install/dir
+
+# psycopg2 config
+export PATH="/usr/local/opt/libpq/bin:$PATH"
+
+# kubectl alias
+alias k="kubectl"
