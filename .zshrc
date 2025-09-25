@@ -102,3 +102,7 @@ export PATH="/usr/local/opt/libpq/bin:$PATH"
 
 # kubectl alias
 alias k="kubectl"
+
+# pomodoro alias and pathing
+alias po="pomodoro"
+export PATH="$PATH:$HOME/go/bin"
