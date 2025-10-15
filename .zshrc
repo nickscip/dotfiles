@@ -12,14 +12,16 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git direnv rust git-commit vi-mode thefuck zsh-syntax-highlighting git-prompt fzf)
+plugins=(git direnv rust git-commit vi-mode git-prompt fzf)
 
 source $ZSH/oh-my-zsh.sh
+source $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # User configuration
 
 # Setting up python path
-export PATH="/usr/local/bin:$PATH"
+export PATH="/opt/homebrew/bin:$PATH"
+alias python="python3"
 
 # Setting up poetry
 export PATH="$HOME/.local/bin:$PATH"
@@ -38,8 +40,6 @@ else
 fi
 unset __conda_setup
 # <<< conda initialize <<<
-
-. "$HOME/.atuin/bin/env"
 
 eval "$(atuin init zsh)"
 export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
@@ -90,8 +90,6 @@ tm() {
     terramate "$@"
   fi
 }
-
-source "$HOME/.rye/env"
 
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
