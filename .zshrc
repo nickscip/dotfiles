@@ -104,3 +104,7 @@ alias k="kubectl"
 # pomodoro alias and pathing
 alias po="pomodoro"
 export PATH="$PATH:$HOME/go/bin"
+export PATH="$HOME/.local/bin:$PATH"
+
+alias ca="cursor-agent"
+export AWS_DEFAULT_PROFILE=opal
