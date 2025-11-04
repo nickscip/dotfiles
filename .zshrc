@@ -117,13 +117,13 @@ export AWS_DEFAULT_PROFILE=opal
 # and rebasing the current feature branch onto it.
 #
 # Usage:
-#   rebase           (Updates 'main' and rebases current branch onto it)
-#   rebase develop   (Updates 'develop' and rebases current branch onto it)
-#   rebase -p        (Rebases onto 'main' AND force-pushes with -f)
-#   rebase -p develop (Rebases onto 'develop' AND force-pushes with -f)
-#   rebase develop -p (Same as above)
+#   rb           (Updates 'main' and rebases current branch onto it)
+#   rb develop   (Updates 'develop' and rebases current branch onto it)
+#   rb -p        (Rebases onto 'main' AND force-pushes with -f)
+#   rb -p develop (Rebases onto 'develop' AND force-pushes with -f)
+#   rb develop -p (Same as above)
 #
-rebase() {
+rb() {
     # 1. Get the current branch name
     local current_branch
     current_branch=$(git rev-parse --abbrev-ref HEAD)
