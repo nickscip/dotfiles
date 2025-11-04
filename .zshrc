@@ -108,3 +108,112 @@ export PATH="$HOME/.local/bin:$PATH"
 
 alias ca="cursor-agent"
 export AWS_DEFAULT_PROFILE=opal
+
+# -----------------------------------------------------------------
+# Custom Git Rebase Function
+# -----------------------------------------------------------------
+#
+# This function automates the process of updating a target branch
+# and rebasing the current feature branch onto it.
+#
+# Usage:
+#   rebase           (Updates 'main' and rebases current branch onto it)
+#   rebase develop   (Updates 'develop' and rebases current branch onto it)
+#   rebase -p        (Rebases onto 'main' AND force-pushes with -f)
+#   rebase -p develop (Rebases onto 'develop' AND force-pushes with -f)
+#   rebase develop -p (Same as above)
+#
+rebase() {
+    # 1. Get the current branch name
+    local current_branch
+    current_branch=$(git rev-parse --abbrev-ref HEAD)
+    if [[ $? -ne 0 ]]; then
+        echo "Error: Not on a branch (detached HEAD state)." >&2
+        return 1
+    fi
+
+    # Parse arguments for target branch and -p flag
+    local target_branch="main"
+    local force_push=0
+    local branch_arg_found=0
+
+    # Loop through all provided arguments
+    for arg in "$@"; do
+        if [[ "$arg" == "-p" ]]; then
+            force_push=1
+        elif [[ "$arg" == -* ]]; then
+            # Deny any other flags
+            echo "Error: Unsupported flag $arg. Only -p is allowed." >&2
+            return 1
+        else
+            # This is a positional argument (the branch name)
+            if (( branch_arg_found == 1 )); then
+                echo "Error: Multiple branch names specified." >&2
+                return 1
+            fi
+            target_branch=$arg
+            branch_arg_found=1
+        fi
+    done
+
+    echo "--- Rebasing $current_branch onto $target_branch ---"
+
+    # 2. Checkout to the supplied branch name
+    echo "\n[1/5] Checking out $target_branch..."
+    if ! git checkout "$target_branch"; then
+        echo "Error: Could not check out $target_branch." >&2
+        # Attempt to return to the original branch for safety
+        git checkout "$current_branch"
+        return 1
+    fi
+
+    # 3. Pull changes
+    echo "\n[2/5] Pulling changes for $target_branch..."
+    if ! git pull; then
+        echo "Error: Could not pull $target_branch." >&2
+        git checkout "$current_branch"
+        return 1
+    fi
+
+    # 4. Checkout back to the current branch
+    echo "\n[3/5] Checking out back to $current_branch..."
+    if ! git checkout "$current_branch"; then
+        echo "Error: Could not check out $current_branch." >&2
+        return 1 # We're in a bad state, abort
+    fi
+
+    # 5. Run git rebase supplied branch name
+    echo "\n[4/5] Rebasing $current_branch onto $target_branch..."
+    if ! git rebase "$target_branch"; then
+        echo "Error: Rebase failed. Conflicts likely." >&2
+        echo "Please resolve conflicts and run 'git rebase --continue' or 'git rebase --abort'." >&2
+        echo "Script halted. Push will NOT occur." >&2
+        return 1
+    fi
+
+    echo "Rebase successful."
+
+    # 6. If flag -p is added, push with -f
+    if (( force_push == 1 )); then
+        echo "\n[5/5] Force-pushing $current_branch with -f..."
+        
+        # ---
+        # SAFETY WARNING: 'git push -f' is destructive.
+        # 'git push --force-with-lease' is a much safer alternative
+        # that checks if anyone else has pushed to the branch.
+        # But, honoring the request for '-f'
+        # ---
+        if ! git push -f; then
+            echo "Error: Force push failed." >&2
+            return 1
+        fi
+        echo "Force push successful."
+    else
+        echo "\n[5/5] Rebase complete."
+        echo "Run 'git push --force-with-lease' to update the remote branch."
+    fi
+
+    echo "--- Rebase complete ---"
+    return 0
+}
+
