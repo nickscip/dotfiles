@@ -217,3 +217,44 @@ rb() {
     return 0
 }
 
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# place this after nvm initialization!
+autoload -U add-zsh-hook
+
+load-nvmrc() {
+  local nvmrc_path
+  nvmrc_path="$(nvm_find_nvmrc)"
+
+  if [ -n "$nvmrc_path" ]; then
+    local nvmrc_node_version
+    nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
+
+    if [ "$nvmrc_node_version" = "N/A" ]; then
+      nvm install
+    elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
+      nvm use
+    fi
+  elif [ -n "$(PWD=$OLDPWD nvm_find_nvmrc)" ] && [ "$(nvm version)" != "$(nvm version default)" ]; then
+    echo "Reverting to nvm default version"
+    nvm use default
+  fi
+}
+
+add-zsh-hook chpwd load-nvmrc
+load-nvmrc
+
+export VAULT_ADDR=https://vault.sandbox.k8s.centrio.com:8200
+function vault_token() {
+    CLIENT_ID=`cat ~/.deployinator_api_key  | jq -r '."Client-Id"'`
+    CLIENT_SECRET=`cat ~/.deployinator_api_key  | jq -r '."Client-Secret"'`
+    export VAULT_TOKEN=`curl -X POST https://deployinator.sandbox.k8s.centrio.com/api/vault.tokens -H "Client-Id: ${CLIENT_ID}" -H "Client-Secret: ${CLIENT_SECRET}" | jq -r '.token'`
+}
+
+# Load local environment variables/secrets if the file exists
+if [ -f ~/.zsh_secrets ]; then
+    source ~/.zsh_secrets
+fi
