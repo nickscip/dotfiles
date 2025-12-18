@@ -252,3 +252,9 @@ load-nvmrc
 if [ -f ~/.zsh_secrets ]; then
     source ~/.zsh_secrets
 fi
+
+# Add Docker CLI
+export PATH="$PATH:$HOME/usr/local/bin"
+
+# Add Rust
+export PATH="$PATH:$HOME/.cargo/bin"
