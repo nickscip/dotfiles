@@ -41,7 +41,12 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
+# Atuin configs
 eval "$(atuin init zsh)"
+export ATUIN_NOBIND="true"
+eval "$(atuin init zsh)"
+bindkey '^r' atuin-search
+
 export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
 eval $(thefuck --alias fuck)
 
@@ -124,99 +129,70 @@ export AWS_DEFAULT_PROFILE=opal
 #   rb develop -p (Same as above)
 #
 rb() {
-    # 1. Get the current branch name
+    # 1. Get current branch name
     local current_branch
     current_branch=$(git rev-parse --abbrev-ref HEAD)
     if [[ $? -ne 0 ]]; then
-        echo "Error: Not on a branch (detached HEAD state)." >&2
+        echo "Error: Not on a branch." >&2
         return 1
     fi
 
-    # Parse arguments for target branch and -p flag
+    # Parse arguments
     local target_branch="main"
     local force_push=0
     local branch_arg_found=0
 
-    # Loop through all provided arguments
     for arg in "$@"; do
         if [[ "$arg" == "-p" ]]; then
             force_push=1
         elif [[ "$arg" == -* ]]; then
-            # Deny any other flags
-            echo "Error: Unsupported flag $arg. Only -p is allowed." >&2
+            echo "Error: Unsupported flag $arg." >&2
             return 1
         else
-            # This is a positional argument (the branch name)
-            if (( branch_arg_found == 1 )); then
-                echo "Error: Multiple branch names specified." >&2
-                return 1
-            fi
             target_branch=$arg
             branch_arg_found=1
         fi
     done
 
-    echo "--- Rebasing $current_branch onto $target_branch ---"
+    echo "--- Updating and Rebasing $current_branch onto origin/$target_branch ---"
 
-    # 2. Checkout to the supplied branch name
-    echo "\n[1/5] Checking out $target_branch..."
-    if ! git checkout "$target_branch"; then
-        echo "Error: Could not check out $target_branch." >&2
-        # Attempt to return to the original branch for safety
-        git checkout "$current_branch"
+    # 2. Fetch latest changes from remote (No checkout needed!)
+    echo "\n[1/4] Fetching latest changes from origin..."
+    if ! git fetch origin "$target_branch"; then
+        echo "Error: Could not fetch $target_branch from origin." >&2
         return 1
     fi
 
-    # 3. Pull changes
-    echo "\n[2/5] Pulling changes for $target_branch..."
-    if ! git pull; then
-        echo "Error: Could not pull $target_branch." >&2
-        git checkout "$current_branch"
+    # 3. Fast-forward local target branch to match remote
+    echo "\n[2/4] Updating local $target_branch to match origin/$target_branch..."
+    if ! git branch -f "$target_branch" "origin/$target_branch" 2>/dev/null; then
+        echo "Warning: Could not update local $target_branch (you may be on it or it may not exist locally). Continuing with rebase." >&2
+    fi
+
+    # 4. Rebase current branch onto the remote version of the target
+    echo "\n[3/4] Rebasing $current_branch onto origin/$target_branch..."
+    if ! git rebase "origin/$target_branch"; then
+        echo "Error: Rebase failed. Resolve conflicts and continue manually." >&2
         return 1
     fi
 
-    # 4. Checkout back to the current branch
-    echo "\n[3/5] Checking out back to $current_branch..."
-    if ! git checkout "$current_branch"; then
-        echo "Error: Could not check out $current_branch." >&2
-        return 1 # We're in a bad state, abort
-    fi
-
-    # 5. Run git rebase supplied branch name
-    echo "\n[4/5] Rebasing $current_branch onto $target_branch..."
-    if ! git rebase "$target_branch"; then
-        echo "Error: Rebase failed. Conflicts likely." >&2
-        echo "Please resolve conflicts and run 'git rebase --continue' or 'git rebase --abort'." >&2
-        echo "Script halted. Push will NOT occur." >&2
-        return 1
-    fi
-
-    echo "Rebase successful."
-
-    # 6. If flag -p is added, push with -f
+    # 5. Handle Force Push
     if (( force_push == 1 )); then
-        echo "\n[5/5] Force-pushing $current_branch with -f..."
-        
-        # ---
-        # SAFETY WARNING: 'git push -f' is destructive.
-        # 'git push --force-with-lease' is a much safer alternative
-        # that checks if anyone else has pushed to the branch.
-        # But, honoring the request for '-f'
-        # ---
-        if ! git push -f; then
-            echo "Error: Force push failed." >&2
+        echo "\n[4/4] Force-pushing $current_branch..."
+        # Using --force-with-lease as it's safer, but stays true to your -p intent
+        if ! git push --force-with-lease; then
+            echo "Error: Push failed." >&2
             return 1
         fi
-        echo "Force push successful."
+        echo "Push successful."
     else
-        echo "\n[5/5] Rebase complete."
-        echo "Run 'git push --force-with-lease' to update the remote branch."
+        echo "\n[4/4] Rebase complete."
+        echo "Run 'git push --force-with-lease' to update remote."
     fi
 
-    echo "--- Rebase complete ---"
+    echo "--- Process Complete ---"
     return 0
 }
-
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -258,3 +234,11 @@ export PATH="$PATH:$HOME/usr/local/bin"
 
 # Add Rust
 export PATH="$PATH:$HOME/.cargo/bin"
+
+unset LESS
+
+export CLAUDE_CODE_USE_BEDROCK=1
+export AWS_REGION=us-east-1
+
+# Amp CLI
+export PATH="/Users/nscipione/.amp/bin:$PATH"
