@@ -241,15 +241,7 @@ unset LESS
 alias op='npx opal-security'
 
 # Configure Claude Code for Bedrock
-export CLAUDE_CODE_USE_BEDROCK=1
-export AWS_PROFILE=ClaudeCodeBedrockRole-Opal
-export AWS_REGION=us-east-1
-
-# One-command credential refresh — skips interactive role selector
-bedrock-refresh() {
-  op iam-roles start --id 009b5f7d-a3b8-4298-8c22-fc43c289768b
-  echo "Bedrock credentials refreshed."
-}
+export ANTHROPIC_MODEL='claude-opus-4-7'
 
 # Amp CLI
 export PATH="/Users/nscipione/.amp/bin:$PATH"
