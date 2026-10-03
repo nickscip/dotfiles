@@ -21,6 +21,7 @@ brew bundle --file "$DOTFILES/Brewfile"
 
 # Default Node version (other versions install per repo with `fnm install`)
 fnm install 22.14.0 && fnm default 22.14.0
+eval "$(fnm env --shell bash)" # put node on PATH for the rest of this script (Mason needs npm)
 
 # Create a projects directory
 mkdir -p "$HOME/Developer/Work"
@@ -35,6 +36,8 @@ done
 
 # Neovim config lives in its own repo
 [ -d "$HOME/.config/nvim" ] || git clone git@github.com:nickscip/nvim.git "$HOME/.config/nvim"
+# Install plugins at their locked versions, then the LSP servers
+nvim --headless "+Lazy! restore" "+MasonToolsInstallSync" +qa
 
 # Not in this repo, copy by hand if wanted: ~/.zsh_secrets (optional) and
 # ~/.config/ghostty/sounds/bell.wav (licensed sound, gitignored)
