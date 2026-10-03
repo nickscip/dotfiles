@@ -220,8 +220,11 @@ load-nvmrc() {
   fi
 }
 
-add-zsh-hook chpwd load-nvmrc
-load-nvmrc
+# Only hook into cd when nvm is actually installed
+if command -v nvm >/dev/null; then
+  add-zsh-hook chpwd load-nvmrc
+  load-nvmrc
+fi
 
 # Load local environment variables/secrets if the file exists
 if [ -f ~/.zsh_secrets ]; then

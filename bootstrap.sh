@@ -28,9 +28,16 @@ brew bundle --file "$DOTFILES/Brewfile"
 # Create a projects directory
 mkdir -p "$HOME/Developer/Work"
 
-# TODO: Bootstrap the other config files
+# Link app configs into ~/.config (an existing real folder is moved aside to <name>.bak)
+mkdir -p "$HOME/.config"
+for dir in atuin fish gh-copilot ghostty htop thefuck; do
+  target="$HOME/.config/$dir"
+  [ -d "$target" ] && [ ! -L "$target" ] && mv "$target" "$target.bak"
+  ln -sfn "$DOTFILES/$dir" "$target"
+done
 
-# ~/.zsh_secrets is not in this repo: copy it over from the old machine by hand
+# Not in this repo, copy by hand if wanted: ~/.zsh_secrets (optional) and
+# ~/.config/ghostty/sounds/bell.wav (licensed sound, gitignored)
 
 # Run this last to load the new .zshrc in a fresh shell
 exec zsh

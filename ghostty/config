@@ -5,3 +5,19 @@ keybind = shift+ctrl+l=new_split:right
 keybind = shift+ctrl+k=new_split:up
 keybind = shift+ctrl+j=new_split:down
 
+keybind = ctrl+h=goto_split:left
+keybind = ctrl+l=goto_split:right
+keybind = ctrl+k=goto_split:up
+keybind = ctrl+j=goto_split:down
+
+keybind = opt+cmd+h=resize_split:left,15
+keybind = opt+cmd+l=resize_split:right,15
+keybind = opt+cmd+k=resize_split:up,15
+keybind = opt+cmd+j=resize_split:down,15
+keybind = opt+cmd+e=equalize_splits
+
+keybind = cmd+enter=toggle_split_zoom
+keybind = shift+enter=text:\n
+
+bell-features = attention,title,audio,system,border
+bell-audio-path = ~/.config/ghostty/sounds/bell.wav
