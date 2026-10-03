@@ -36,6 +36,9 @@ for dir in atuin fish gh-copilot ghostty thefuck; do
   ln -sfn "$DOTFILES/$dir" "$target"
 done
 
+# Neovim config lives in its own repo
+[ -d "$HOME/.config/nvim" ] || git clone git@github.com:nickscip/nvim.git "$HOME/.config/nvim"
+
 # Not in this repo, copy by hand if wanted: ~/.zsh_secrets (optional) and
 # ~/.config/ghostty/sounds/bell.wav (licensed sound, gitignored)
 
