@@ -1,21 +1,59 @@
-# Path to your oh-my-zsh installation.
-export ZSH="$HOME/.oh-my-zsh"
+# --- Shell basics (what oh-my-zsh used to set up) ---
 
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="robbyrussell"
+# History
+HISTFILE=~/.zsh_history
+HISTSIZE=50000
+SAVEHIST=10000
+setopt extended_history hist_expire_dups_first hist_ignore_dups hist_ignore_space hist_verify share_history
 
-# Which plugins would you like to load?
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
-# Example format: plugins=(rails git textmate ruby lighthouse)
-# Add wisely, as too many plugins slow down shell startup.
-plugins=(git direnv rust git-commit vi-mode git-prompt fzf)
+# Directories, completion and job behavior
+setopt auto_cd auto_pushd pushd_ignore_dups pushd_minus
+setopt always_to_end complete_in_word interactive_comments long_list_jobs prompt_subst
+unsetopt flow_control
 
-source $ZSH/oh-my-zsh.sh
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# Colors: $fg/$reset_color for the prompt, ls and grep output
+autoload -U colors && colors
+export CLICOLOR=1 LSCOLORS="Gxfxcxdxbxegedabagacad"
+alias grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox,.venv,venv}'
+
+# Completion (case-insensitive, arrow-key menu)
+fpath+=/opt/homebrew/share/zsh/site-functions
+autoload -Uz compinit && compinit
+zstyle ':completion:*' matcher-list 'm:{[:lower:][:upper:]}={[:upper:][:lower:]}' 'r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' menu select
+zstyle ':completion:*' special-dirs true
+zstyle ':completion:*' list-colors ''
+
+# Vi mode, with a 10ms Esc delay instead of zsh's default 400ms
+bindkey -v
+KEYTIMEOUT=1
+bindkey '^?' backward-delete-char # backspace past where insert mode started
+bindkey '^h' backward-delete-char
+bindkey '^w' backward-kill-word
+bindkey '^p' up-history
+bindkey '^n' down-history
+bindkey '^a' beginning-of-line
+bindkey '^e' end-of-line
+autoload -Uz edit-command-line up-line-or-beginning-search down-line-or-beginning-search
+zle -N edit-command-line
+zle -N up-line-or-beginning-search
+zle -N down-line-or-beginning-search
+bindkey '^x^e' edit-command-line
+# Up/Down search history for lines starting with what's already typed
+for keymap in viins vicmd; do
+  bindkey -M $keymap '^[[A' up-line-or-beginning-search
+  bindkey -M $keymap '^[OA' up-line-or-beginning-search
+  bindkey -M $keymap '^[[B' down-line-or-beginning-search
+  bindkey -M $keymap '^[OB' down-line-or-beginning-search
+done
+
+# Auto-quote URLs when pasting
+autoload -Uz bracketed-paste-magic url-quote-magic
+zle -N bracketed-paste bracketed-paste-magic
+zle -N self-insert url-quote-magic
+
+eval "$(direnv hook zsh)"
+alias gb="git branch"
 
 # User configuration
 
@@ -41,14 +79,12 @@ fi
 unset __conda_setup
 # <<< conda initialize <<<
 
-# Atuin configs
-eval "$(atuin init zsh)"
-export ATUIN_NOBIND="true"
-eval "$(atuin init zsh)"
-bindkey '^r' atuin-search
+# Atuin records history; Ctrl-R stays with fzf and Up with prefix search
+eval "$(atuin init zsh --disable-up-arrow --disable-ctrl-r)"
 
 export PATH="/usr/local/opt/openjdk@17/bin:$PATH"
-eval $(thefuck --alias fuck)
+# thefuck starts Python, so only load its alias the first time `fuck` is run
+fuck() { eval "$(thefuck --alias fuck)" && fuck "$@"; }
 
 alias reload="source ~/.zshrc"
 alias acc="source .venv/bin/activate"
@@ -81,10 +117,22 @@ function aws_prof {
 }
 PROMPT='%F{green}%~%f $(aws_prof)'
 
+# Git branch on the right, with ✚ when tracked files have changes (one git call per prompt)
+function git_prompt {
+  local line branch dirty
+  for line in ${(f)"$(git status --porcelain=v2 --branch -uno 2>/dev/null)"}; do
+    case $line in
+      '# branch.head '*) branch=${line#\# branch.head } ;;
+      '#'*) ;;
+      *) dirty='|✚'; break ;;
+    esac
+  done
+  [[ -n $branch ]] && echo "%{$fg_bold[blue]%}git:(%{$fg_bold[magenta]%}${branch}%{$fg_bold[blue]%}${dirty})%{$reset_color%}"
+}
+RPROMPT='$(git_prompt)'
+
 alias mydir="cd ~/Developer/Personal/"
 alias workdir="cd ~/Developer/Work/"
-fpath+=/opt/homebrew/share/zsh/site-functions
-autoload -Uz compinit && compinit
 
 # Alias terramate
 tm() {
@@ -98,7 +146,6 @@ tm() {
 
 # Set up fzf key bindings and fuzzy completion
 source <(fzf --zsh)
-export FZF_BASE=/path/to/fzf/install/dir
 
 # psycopg2 config
 export PATH="/usr/local/opt/libpq/bin:$PATH"
@@ -194,37 +241,8 @@ rb() {
     return 0
 }
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-# place this after nvm initialization!
-autoload -U add-zsh-hook
-
-load-nvmrc() {
-  local nvmrc_path
-  nvmrc_path="$(nvm_find_nvmrc)"
-
-  if [ -n "$nvmrc_path" ]; then
-    local nvmrc_node_version
-    nvmrc_node_version=$(nvm version "$(cat "${nvmrc_path}")")
-
-    if [ "$nvmrc_node_version" = "N/A" ]; then
-      nvm install
-    elif [ "$nvmrc_node_version" != "$(nvm version)" ]; then
-      nvm use
-    fi
-  elif [ -n "$(PWD=$OLDPWD nvm_find_nvmrc)" ] && [ "$(nvm version)" != "$(nvm version default)" ]; then
-    echo "Reverting to nvm default version"
-    nvm use default
-  fi
-}
-
-# Only hook into cd when nvm is actually installed
-if command -v nvm >/dev/null; then
-  add-zsh-hook chpwd load-nvmrc
-  load-nvmrc
-fi
+# Node versions via fnm: reads .nvmrc and switches on cd
+command -v fnm >/dev/null && eval "$(fnm env --use-on-cd --version-file-strategy=recursive --resolve-engines=false --shell zsh)"
 
 # Load local environment variables/secrets if the file exists
 if [ -f ~/.zsh_secrets ]; then
@@ -266,3 +284,6 @@ if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-clou
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:$HOME/.lmstudio/bin"
 # End of LM Studio CLI section
+
+# Must stay last: highlights based on every widget defined above
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh

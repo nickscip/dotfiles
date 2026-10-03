@@ -4,13 +4,7 @@ echo "Setting up your Mac"
 
 DOTFILES="$HOME/Developer/Personal/dotfiles"
 
-# Check for Oh My Zsh and install it if we don't have it
-# (omz is a zsh function, so `which` can't see it from bash; RUNZSH=no stops the installer from exec'ing zsh mid-script)
-if [ ! -d "$HOME/.oh-my-zsh" ]; then
-  RUNZSH=no /bin/sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/HEAD/tools/install.sh)"
-fi
-
-# Symlinks the .zshrc to the .dotfiles (-f replaces the default one Oh My Zsh writes)
+# Symlinks the .zshrc to the .dotfiles (-f replaces any existing one)
 ln -sfw "$DOTFILES/.zshrc" "$HOME/.zshrc"
 
 # Check for Homebrew and install it if we don't have it
