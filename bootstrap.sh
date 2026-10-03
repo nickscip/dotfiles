@@ -30,7 +30,7 @@ mkdir -p "$HOME/Developer/Work"
 
 # Link app configs into ~/.config (an existing real folder is moved aside to <name>.bak)
 mkdir -p "$HOME/.config"
-for dir in atuin fish gh-copilot ghostty htop thefuck; do
+for dir in atuin fish gh-copilot ghostty thefuck; do
   target="$HOME/.config/$dir"
   [ -d "$target" ] && [ ! -L "$target" ] && mv "$target" "$target.bak"
   ln -sfn "$DOTFILES/$dir" "$target"
