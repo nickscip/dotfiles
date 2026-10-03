@@ -19,6 +19,9 @@ brew update
 # Install all our dependencies with bundle (See Brewfile)
 brew bundle --file "$DOTFILES/Brewfile"
 
+# Default Node version (other versions install per repo with `fnm install`)
+fnm install 22.14.0 && fnm default 22.14.0
+
 # Create a projects directory
 mkdir -p "$HOME/Developer/Work"
 
