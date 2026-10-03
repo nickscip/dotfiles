@@ -15,7 +15,7 @@ ZSH_THEME="robbyrussell"
 plugins=(git direnv rust git-commit vi-mode git-prompt fzf)
 
 source $ZSH/oh-my-zsh.sh
-source $ZSH/custom/plugins/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # User configuration
 
@@ -28,14 +28,14 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('~/opt/miniconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$("$HOME/opt/miniconda3/bin/conda" 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "~/opt/miniconda3/etc/profile.d/conda.sh" ]; then
-        . "~/opt/miniconda3/etc/profile.d/conda.sh"
+    if [ -f "$HOME/opt/miniconda3/etc/profile.d/conda.sh" ]; then
+        . "$HOME/opt/miniconda3/etc/profile.d/conda.sh"
     else
-        export PATH="~/opt/miniconda3/bin:$PATH"
+        export PATH="$HOME/opt/miniconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -223,7 +223,6 @@ load-nvmrc() {
 add-zsh-hook chpwd load-nvmrc
 load-nvmrc
 
-
 # Load local environment variables/secrets if the file exists
 if [ -f ~/.zsh_secrets ]; then
     source ~/.zsh_secrets
@@ -244,8 +243,23 @@ alias op='npx opal-security'
 export ANTHROPIC_MODEL='claude-opus-4-7'
 
 # Amp CLI
-export PATH="/Users/nscipione/.amp/bin:$PATH"
+export PATH="$HOME/.amp/bin:$PATH"
 
 # Blend environment (added by blend-agents)
 [ -f "$HOME/.blend_profile" ] && source "$HOME/.blend_profile"
 
+
+export EDITOR=nvim
+
+# opencode
+export PATH="$HOME/.opencode/bin:$PATH"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f "$HOME/google-cloud-sdk/path.zsh.inc" ]; then . "$HOME/google-cloud-sdk/path.zsh.inc"; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f "$HOME/google-cloud-sdk/completion.zsh.inc" ]; then . "$HOME/google-cloud-sdk/completion.zsh.inc"; fi
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:$HOME/.lmstudio/bin"
+# End of LM Studio CLI section
