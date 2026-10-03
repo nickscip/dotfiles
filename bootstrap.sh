@@ -34,6 +34,10 @@ for dir in atuin fish gh-copilot ghostty thefuck; do
   ln -sfn "$DOTFILES/$dir" "$target"
 done
 
+# Git aliases (git feat/fix/... conventional commits, git co)
+GIT_ALIASES="~/Developer/Personal/dotfiles/git/aliases.gitconfig"
+git config --global --get-all include.path | grep -qxF "$GIT_ALIASES" || git config --global --add include.path "$GIT_ALIASES"
+
 # Neovim config lives in its own repo
 [ -d "$HOME/.config/nvim" ] || git clone git@github.com:nickscip/nvim.git "$HOME/.config/nvim"
 # Install plugins at their locked versions, then the LSP servers
