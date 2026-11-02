@@ -261,7 +261,6 @@ unset LESS
 alias op='npx opal-security'
 
 # Configure Claude Code for Bedrock
-export ANTHROPIC_MODEL='claude-opus-4-7'
 
 # Amp CLI
 export PATH="$HOME/.amp/bin:$PATH"
